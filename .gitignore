@@ -1,2 +1,15 @@
-.claude/settings.local.json
-state/revenue.md
+# Secrets
+.env
+.env.*
+
+# Agent config
+.claude/
+
+# Internal state
+state/
+
+# Social content
+social/
+
+# Claude memory
+memory/
