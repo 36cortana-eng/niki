@@ -2,7 +2,7 @@
 
 Run an autonomous AI business agent on Claude Code. No Mac Mini. No servers. No engineering degree.
 
-**[Get instant access for $29 →](https://nikitheai.vercel.app)**
+**[Get instant access for $29 →](https://niki-gules.vercel.app)**
 
 ---
 
