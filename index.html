@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Niki — AI Agent Starter Kit</title>
+  <meta name="description" content="Run an autonomous AI agent that manages your business — no Mac Mini, no servers, no engineering degree. Built on Claude Code." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #222222;
+      --text: #f0f0f0;
+      --muted: #888888;
+      --accent: #7c3aed;
+      --accent-light: #a78bfa;
+      --green: #22c55e;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+    .nav-logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent-light); }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.4);
+      color: var(--accent-light);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.9rem;
+      border-radius: 99px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+    h1 em { color: var(--accent-light); font-style: normal; }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: opacity 0.15s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-secondary:hover { border-color: #555; color: var(--text); }
+    .price-note { font-size: 0.8rem; color: var(--muted); margin-top: 0.75rem; }
+
+    /* PROBLEM */
+    .section { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 2.5rem;
+    }
+    .problem-card {
+      background: var(--surface);
+      padding: 1.75rem;
+    }
+    .problem-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .problem-card.bad h3 { color: #f87171; }
+    .problem-card.good h3 { color: var(--green); }
+    .problem-card ul { list-style: none; }
+    .problem-card ul li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding: 0.35rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+    .problem-card ul li::before { flex-shrink: 0; margin-top: 2px; }
+    .problem-card.bad ul li::before { content: "✗"; color: #f87171; }
+    .problem-card.good ul li::before { content: "✓"; color: var(--green); }
+
+    /* WHAT YOU GET */
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+    .include-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .include-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .include-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .include-card p { font-size: 0.85rem; color: var(--muted); }
+
+    /* HOW IT WORKS */
+    .steps { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: rgba(124,58,237,0.2);
+      border: 1px solid rgba(124,58,237,0.4);
+      color: var(--accent-light);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .step p { font-size: 0.85rem; color: var(--muted); }
+
+    /* STACK */
+    .stack-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+    .stack-tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* CTA BOTTOM */
+    .cta-section {
+      text-align: center;
+      padding: 6rem 2rem;
+      background: linear-gradient(to bottom, transparent, rgba(124,58,237,0.05));
+      border-top: 1px solid var(--border);
+    }
+    .cta-section h2 { margin-bottom: 0.75rem; }
+    .cta-section p { color: var(--muted); margin-bottom: 2rem; }
+    .price-big {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .price-big span { font-size: 1.2rem; color: var(--muted); font-weight: 400; vertical-align: super; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* DIVIDER */
+    hr { border: none; border-top: 1px solid var(--border); }
+
+    @media (max-width: 600px) {
+      .problem-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Niki <span>AI</span></div>
+  <a href="#buy" class="nav-cta">Get Niki — $29</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">AI Agent Starter Kit</div>
+  <h1>Your business, run by an <em>AI agent</em>.<br>No infra required.</h1>
+  <p class="hero-sub">
+    Niki is a done-for-you setup for running an autonomous AI agent on Claude Code.
+    It handles code, deployments, payments, and social — all from Telegram.
+  </p>
+  <div class="hero-actions">
+    <a href="#buy" class="btn-primary">Get instant access &rarr;</a>
+    <a href="#how" class="btn-secondary">See how it works</a>
+  </div>
+  <p class="price-note">One-time payment. No subscription. Yours forever.</p>
+</section>
+
+<hr />
+
+<!-- PROBLEM VS SOLUTION -->
+<section class="section">
+  <p class="section-label">The problem</p>
+  <h2>Felix & OpenClaw are powerful.<br>But they're built for engineers.</h2>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <h3>Felix / OpenClaw setup</h3>
+      <ul>
+        <li>Dedicated Mac Mini or server required</li>
+        <li>Custom code to write and maintain</li>
+        <li>Hours of setup, days of debugging</li>
+        <li>Breaks when you update something</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <h3>Niki starter kit</h3>
+      <ul>
+        <li>Runs natively on Claude Code — no hardware</li>
+        <li>Pre-built CLAUDE.md template, ready to go</li>
+        <li>Set up in under 30 minutes</li>
+        <li>Maintained by Anthropic's own tooling</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section class="section" style="padding-top: 0;">
+  <p class="section-label">What's included</p>
+  <h2>Everything you need to launch<br>your AI agent today.</h2>
+  <div class="includes-grid">
+    <div class="include-card">
+      <div class="include-icon">🧠</div>
+      <h3>CLAUDE.md Agent Brain</h3>
+      <p>The core config that turns Claude Code into an autonomous business agent. Pre-wired with rules, routing logic, and memory patterns.</p>
+    </div>
+    <div class="include-card">
+      <div class="include-icon">📱</div>
+      <h3>Telegram Command Interface</h3>
+      <p>Control your agent from anywhere. Send tasks via Telegram, get updates back. Full setup guide included.</p>
+    </div>
+    <div class="include-card">
+      <div class="include-icon">💳</div>
+      <h3>Stripe MCP Integration</h3>
+      <p>Let your agent manage payments, create products, and track revenue — connected via Stripe MCP.</p>
+    </div>
+    <div class="include-card">
+      <div class="include-icon">🚀</div>
+      <h3>GitHub + Vercel Deploy</h3>
+      <p>Your agent ships code and deploys it. GitHub MCP + Vercel MCP configured out of the box.</p>
+    </div>
+    <div class="include-card">
+      <div class="include-icon">🐦</div>
+      <h3>Twitter/X Social Queue</h3>
+      <p>Draft, review, and post content via Twitter MCP. Includes content queue workflow so you stay in control.</p>
+    </div>
+    <div class="include-card">
+      <div class="include-icon">📂</div>
+      <h3>File-Based Memory System</h3>
+      <p>State files for status, revenue, and tasks. Your agent always knows where things stand — across sessions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how" style="padding-top: 0;">
+  <p class="section-label">How it works</p>
+  <h2>From zero to autonomous agent<br>in four steps.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>Download the starter kit</h3>
+        <p>Get the CLAUDE.md template, file structure, and setup guide. Everything is pre-configured.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>Connect your accounts</h3>
+        <p>Link GitHub, Vercel, Stripe, and Telegram in about 30 minutes. Step-by-step instructions included.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>Open Claude Code</h3>
+        <p>Launch Claude Code in your project folder. The CLAUDE.md activates your agent automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h3>Message your agent on Telegram</h3>
+        <p>Send tasks, get updates, approve actions. Your agent works while you sleep.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="section" style="padding-top: 0;">
+  <p class="section-label">The stack</p>
+  <h2>Built entirely on Anthropic's<br>native tooling.</h2>
+  <div class="stack-list">
+    <span class="stack-tag">Claude Code</span>
+    <span class="stack-tag">Telegram Channels</span>
+    <span class="stack-tag">GitHub MCP</span>
+    <span class="stack-tag">Vercel MCP</span>
+    <span class="stack-tag">Stripe MCP</span>
+    <span class="stack-tag">Twitter MCP</span>
+    <span class="stack-tag">File-based memory</span>
+    <span class="stack-tag">No custom infra</span>
+  </div>
+</section>
+
+<!-- BUY CTA -->
+<section class="cta-section" id="buy">
+  <p class="section-label">One-time payment</p>
+  <div class="price-big"><span>$</span>29</div>
+  <h2 style="margin-top: 0.5rem;">Ready to run your business<br>on autopilot?</h2>
+  <p>Get the full Niki AI Agent Starter Kit. Instant download, lifetime access.</p>
+  <a href="STRIPE_PAYMENT_LINK" class="btn-primary" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+    Buy now for $29 &rarr;
+  </a>
+  <p class="price-note" style="margin-top: 1rem;">Secure checkout via Stripe &nbsp;·&nbsp; Instant access &nbsp;·&nbsp; No subscription</p>
+</section>
+
+<footer>
+  <span>Niki — AI Agent Starter Kit</span>
+  <span>Built in public &nbsp;·&nbsp; <a href="https://x.com/nikitheai" style="color: var(--accent-light);">@nikitheai</a></span>
+</footer>
+
+</body>
+</html>
