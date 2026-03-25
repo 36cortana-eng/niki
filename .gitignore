@@ -4,12 +4,16 @@
 
 # Agent config
 .claude/
+CLAUDE.md
 
 # Internal state
 state/
 
 # Social content
 social/
+
+# Docs (internal)
+docs/
 
 # Claude memory
 memory/
